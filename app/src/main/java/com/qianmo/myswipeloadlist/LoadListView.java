@@ -88,10 +88,10 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
 
     private void load() {
         mIsLoading = true;
-        mOnLoadListener.loadData();
         if (mLoadView != null) {
             this.addFooterView(mLoadView);
         }
+        mOnLoadListener.loadData();
     }
 
     /**
