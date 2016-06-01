@@ -21,7 +21,9 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
     private boolean mIsLoadEnable = true;
     private boolean mShouldLoad = true;
 
-    //用于外部回调
+    /**
+     * 回调接口，用于数据加载
+     */
     public interface OnLoadListener {
         void loadData();
     }
@@ -57,17 +59,12 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.e("fff", "----firstVisibleItem---==" + firstVisibleItem);
-        Log.e("fff", "----visibleItemCount---==" + visibleItemCount);
-        Log.e("fff", "----totalItemCount---==" + totalItemCount);
         mFirstVisibleItem = firstVisibleItem;
         mVisibleItemCount = visibleItemCount;
         mTotalItemCount = totalItemCount;
         if (mTotalItemCount > mVisibleItemCount) {
-            Log.e("fff", "----有第二页----");
             mShouldLoad = true;
         } else {
-            Log.e("fff", "----没第二页----");
             mShouldLoad = false;
         }
     }
@@ -80,6 +77,11 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
         mOnLoadListener = onLoadListener;
     }
 
+    /**
+     * 判断是否正在加载中
+     *
+     * @return
+     */
     public boolean isLoading() {
         return mIsLoading;
     }
@@ -92,6 +94,9 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
         }
     }
 
+    /**
+     * 数据加载结束后调用此方法
+     */
     public void onLoadComplete() {
         mIsLoading = false;
         if (mLoadView != null) {
@@ -99,10 +104,20 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
         }
     }
 
+    /**
+     * 判断是否可以自动加载
+     *
+     * @return
+     */
     public boolean getLoadEnable() {
         return mIsLoadEnable;
     }
 
+    /**
+     * 设置是否启用自动加载功能
+     *
+     * @param isEnable
+     */
     public void setLoadEnable(boolean isEnable) {
         mIsLoadEnable = isEnable;
     }
