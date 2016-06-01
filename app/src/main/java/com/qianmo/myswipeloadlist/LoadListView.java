@@ -69,10 +69,20 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
         }
     }
 
+    /**
+     * 设置load view
+     *
+     * @param view
+     */
     public void setLoadView(View view) {
         mLoadView = view;
     }
 
+    /**
+     * 设置load listener
+     *
+     * @param onLoadListener
+     */
     public void setOnLoadListener(OnLoadListener onLoadListener) {
         mOnLoadListener = onLoadListener;
     }
