@@ -1,8 +1,7 @@
-package com.qianmo.myswipeloadlist;
+package com.qianmo.anz.android.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -12,7 +11,14 @@ import android.widget.ListView;
  */
 public class LoadListView extends ListView implements AbsListView.OnScrollListener {
 
+    public interface OnLoadScrollListener {
+        public void onScrollStateChanged(AbsListView view, int scrollState);
+
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+    }
+
     private OnLoadListener mOnLoadListener;
+    private OnLoadScrollListener mOnLoadScrollListener;
     private View mLoadView;
     private boolean mIsLoading;
     private int mFirstVisibleItem;
@@ -47,7 +53,10 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+        if (mOnLoadScrollListener != null) {
+            mOnLoadScrollListener.onScrollStateChanged(view, scrollState);
+        }
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
             if (!mShouldLoad) return;
             if (mIsLoading || !mIsLoadEnable) return;
             int lastItemIndex = mFirstVisibleItem + mVisibleItemCount;
@@ -59,6 +68,9 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mOnLoadScrollListener != null) {
+            mOnLoadScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
         mFirstVisibleItem = firstVisibleItem;
         mVisibleItemCount = visibleItemCount;
         mTotalItemCount = totalItemCount;
@@ -130,5 +142,14 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
      */
     public void setLoadEnable(boolean isEnable) {
         mIsLoadEnable = isEnable;
+    }
+
+    /**
+     * 兼容ListView原本的OnScrollListener
+     *
+     * @param onScrollListener
+     */
+    public void setLoadScrollListener(OnLoadScrollListener onScrollListener) {
+        mOnLoadScrollListener = onScrollListener;
     }
 }
