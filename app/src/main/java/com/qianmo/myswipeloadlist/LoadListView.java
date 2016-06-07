@@ -1,4 +1,4 @@
-package com.qianmo.anz.android.widget;
+package com.qianmo.myswipeloadlist;
 
 import android.content.Context;
 import android.util.AttributeSet;
