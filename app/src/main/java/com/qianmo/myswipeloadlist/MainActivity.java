@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mData);
         mListView = (LoadListView) findViewById(R.id.list);
-        mListView.setLoadView(view);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
