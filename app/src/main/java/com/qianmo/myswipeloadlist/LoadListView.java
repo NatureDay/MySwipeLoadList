@@ -2,7 +2,6 @@ package com.qianmo.myswipeloadlist;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -14,21 +13,11 @@ import android.widget.ListView;
  */
 public class LoadListView extends ListView implements AbsListView.OnScrollListener {
 
-    public interface OnLoadScrollListener {
-        void onScrollStateChanged(AbsListView view, int scrollState);
-
-        void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount);
-    }
-
     private OnLoadListener mOnLoadListener;
-    private OnLoadScrollListener mOnLoadScrollListener;
+    private OnScrollListener mOnScrollListener;
     private View mLoadView;
     private boolean mIsLoading;
-    private int mFirstVisibleItem;
-    private int mVisibleItemCount;
-    private int mTotalItemCount;
     private boolean mIsLoadEnable = true;
-    private boolean mShouldLoad = true;
 
     /**
      * 回调接口，用于数据加载
@@ -56,36 +45,27 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
         footerParent.addView(mLoadView);
         addFooterView(footerParent);
         updateLoadViewVisibility(false);
-        setOnScrollListener(this);
+        super.setOnScrollListener(this);
     }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (mOnLoadScrollListener != null) {
-            mOnLoadScrollListener.onScrollStateChanged(view, scrollState);
-        }
-        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            if (!mShouldLoad) return;
-            if (mIsLoading || !mIsLoadEnable) return;
-            int lastItemIndex = mFirstVisibleItem + mVisibleItemCount;
-            if (lastItemIndex >= mTotalItemCount && mOnLoadListener != null) {
-                load();
-            }
+        if (mOnScrollListener != null) {
+            mOnScrollListener.onScrollStateChanged(view, scrollState);
         }
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (mOnLoadScrollListener != null) {
-            mOnLoadScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        if (mOnScrollListener != null) {
+            mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
-        mFirstVisibleItem = firstVisibleItem;
-        mVisibleItemCount = visibleItemCount;
-        mTotalItemCount = totalItemCount;
-        if (mTotalItemCount > mVisibleItemCount) {
-            mShouldLoad = true;
-        } else {
-            mShouldLoad = false;
+
+        if (totalItemCount <= visibleItemCount) return;
+        if (mIsLoading || !mIsLoadEnable) return;
+        int lastItemIndex = firstVisibleItem + visibleItemCount;
+        if (lastItemIndex >= totalItemCount && mOnLoadListener != null) {
+            load();
         }
     }
 
@@ -160,9 +140,10 @@ public class LoadListView extends ListView implements AbsListView.OnScrollListen
     /**
      * 兼容ListView原本的OnScrollListener
      *
-     * @param onScrollListener
+     * @param l
      */
-    public void setLoadScrollListener(OnLoadScrollListener onScrollListener) {
-        mOnLoadScrollListener = onScrollListener;
+    @Override
+    public void setOnScrollListener(OnScrollListener l) {
+        mOnScrollListener = l;
     }
 }
